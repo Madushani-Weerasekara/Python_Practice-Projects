@@ -6,14 +6,14 @@ def load_key():
     file.close() # closing the file
     return key # returning the key
     
-master_pwd = input("What is your master password? ")
-key = load_key().master_pwd.encode() # convert master_pwd into bites and add it to the key
+
+key = load_key()
 fer = Fernet(key) 
 
 # Initializing a encryption module module
 # key + password + text to encrypt = random text
 # rendom text + key + password = text to encrypt
-
+ 
 """
 def write_key():
     key = Fernet.generate_key()
@@ -27,15 +27,23 @@ def view():
     with open('passwords.txt', 'r') as f: # r-> read mode
         for line in f.readlines():
             data = line.rstrip()
-            user, passw = data.split("|")
-            print("User", user, "Password", passw)
 
+            # Skip empty or malformed lines
+            if "|" not in data:
+                continue  # Skip the line if the format is wrong
+            try:
+                user, passw = data.split("|", 1)  # Split the line into username and password
+                print("User: ", user, "Password: ", fer.decrypt(passw.encode()).decode())  # Decrypt and print the password
+            except Exception as e:
+                print(f"Error decrypting password for {user}: {e}")
+
+ 
 def add():
     name = input("Account Name: ")
     pwd = input("Password: ")
     
     with open('passwords.txt', 'a') as f: # a-> add
-        f.write(name + "|" + str(fer.encrypt(pwd.encode())) + "\n") # Taking the password turning into bytes with dot encode function and encrypting it. And converting the whole thin into string. And store it beside the name.
+        f.write(name + "|" + fer.encrypt(pwd.encode()).decode() + "\n") # Taking the password turning into bytes with dot encode function and encrypting it. And converting the whole thin into string. And store it beside the name.
 
 
 
